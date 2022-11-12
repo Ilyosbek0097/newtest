@@ -1,0 +1,30 @@
+version: '3'
+services:
+  php:
+    image: php:7.4-fpm
+    volumes:
+      - './src:/var/www/html'
+
+  nginx:
+    image: nginx:latest
+    ports:
+      - 80:80
+    volumes:
+      - './src:/var/www/html'
+      - './docker/nginx/conf.d:/etc/nginx/conf.d'
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    restart: always
+    ports:
+      - 8077:80
+    environment:
+      # - PMA_ARBITRARY=1
+      - PMA_HOST=db
+    depends_on:
+      - db
+  db: 
+    image: mysql:latest
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    environment:      
+      - MYSQL_ROOT_PASSWORD=12345678
